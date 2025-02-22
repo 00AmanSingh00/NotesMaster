@@ -11,5 +11,11 @@
       "src": "/api/.*",
       "dest": "api/index.js"
     }
-  ]
+  ],
+  "env": {
+    "MONGO_URI": "@MONGO_URI",
+    "JWT_SIGNATURE": "@JWT_SIGNATURE",
+    "FRONTEND_DEV": "@FRONTEND_DEV",
+    "FRONTEND": "@FRONTEND"
+  }
 }
