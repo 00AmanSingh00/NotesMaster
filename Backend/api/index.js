@@ -15,8 +15,8 @@ app.use(cors({
 }));
 
 // Available Routes
-app.use("/api/auth", require("../routes/auth")); // Correct path
-app.use("/api/notes", require("../routes/notes")); // Correct path
+app.use("/api/auth", require("../routes/auth")); 
+app.use("/api/notes", require("../routes/notes")); 
 
 if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "staging") {
     app.get('/', (req, res) => {
