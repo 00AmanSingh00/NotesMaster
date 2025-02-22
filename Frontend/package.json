@@ -1,8 +1,8 @@
 {
-  "name": "dev_notes-frontend",
+  "name": "notesmaster-frontend",
   "version": "2.0.0",
   "private": true,
-  "author": "Dhawal Vijayvargiya",
+  "author": "Aman",
   "homepage": "http:///",
   "dependencies": {
     "@hookform/resolvers": "^3.3.1",
@@ -15,7 +15,7 @@
     "axios": "^1.5.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
-    "dev_notes": "file:..",
+    "notesmaster": "file:..",
     "lucide-react": "^0.269.0",
     "next-themes": "^0.2.1",
     "react": "^18.2.0",

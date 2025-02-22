@@ -1,5 +1,5 @@
 {
-  "name": "dev_notes",
+  "name": "notesmaster",
   "version": "2.0.0",
   "description": "---",
   "scripts": {
@@ -14,15 +14,7 @@
     "preview": "pnpm init:both && concurrently \"pnpm preview:server\" \"pnpm preview:client\""
   },
   "keywords": [],
-  "author": "Dhawal Vijayvargiya",
+  "author": "Aman",
   "license": "ISC",
-  "main": "index.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/dhawal-793/Dev_Notes.git"
-  },
-  "bugs": {
-    "url": "https://github.com/dhawal-793/Dev_Notes/issues"
-  },
-  "homepage": "https://github.com/dhawal-793/Dev_Notes#readme"
+  "main": "index.js"
 }
