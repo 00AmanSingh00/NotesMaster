@@ -1,7 +1,8 @@
-const connectToMongo = require("../db");  // Correct path
+const connectToMongo = require("../db"); // Correct path
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
+
 connectToMongo();
 
 const app = express();
