@@ -1,13 +1,13 @@
 {
-  "name": "dev_notes-backend",
+  "name": "notesmaster-backend",
   "version": "2.0.0",
-  "description": "The backend for dev_notes app",
+  "description": "The backend for notesmaster app",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js"
   },
-  "author": "Dhawal Vijayvargiya",
+  "author": "aman",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
