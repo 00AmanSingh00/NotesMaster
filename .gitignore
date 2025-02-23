@@ -6,3 +6,5 @@
 
 # misc
 */*.env
+Add-Content .gitignore "Backend/.env"
+Add-Content .gitignore "Frontend/.env"
