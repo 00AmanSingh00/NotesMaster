@@ -15,8 +15,8 @@ app.use(cors({
 }));
 
 // Available Routes
-app.use("/api/auth", require("./routes/auth"));
-app.use("/api/notes", require("./routes/notes"));
+app.use("/auth", require("./routes/auth"));
+app.use("/notes", require("./routes/notes"));
 
 // Handle frontend routing for production
 if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "staging") {
