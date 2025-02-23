@@ -26,10 +26,16 @@ const Notes = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    console.log("Token:", token); // Debugging
+    console.log("Token:", token);
 
     if (token) {
-      fetchNotes().catch((err) => console.error("Fetch Notes Error:", err));
+      (async () => {
+        try {
+          await fetchNotes();
+        } catch (err) {
+          console.error("Fetch Notes Error:", err);
+        }
+      })();
     } else {
       navigate("/login");
     }
