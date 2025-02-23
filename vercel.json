@@ -13,13 +13,19 @@
     ],
     "routes": [
       {
-        "src": "/api/.*",
-        "dest": "Backend/index.js"
+        "src": "/api/(.*)",
+        "dest": "/Backend/index.js"
       },
       {
         "src": "/(.*)",
-        "dest": "/Frontend/$1"
+        "dest": "/Frontend/dist/$1",
+        "headers": { "Cache-Control": "s-maxage=31536000, immutable" }
       }
-    ]
+    ],
+    "env": {
+      "JWT_SIGNATURE": "694a9740-d2ba-4497-8764-9e109151f7f1",
+      "MONGO_URI": "mongodb+srv://amansinghh9408:AUU6y5dJaCL4Iv2A@last.kqcug.mongodb.net/?retryWrites=true&w=majority&appName=Last",
+      "FRONTEND": "https://notesmaster.vercel.app"
+    }
   }
   
