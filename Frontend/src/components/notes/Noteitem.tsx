@@ -27,7 +27,7 @@ const Noteitem: FC<NoteitemProps> = ({ note, updateNote }) => {
     <>
       <AlertModal isOpen={open} onClose={() => setOpen(false)} onConfirm={() => delete_Note(note._id)} />
 
-      <Card className="w-full">
+      <Card style={{backgroundColor:"#0d191a"}} className="w-full">
         <CardHeader className="px-2 pt-2">
           <div className="flex items-center justify-between w-h-full">
             <div>

@@ -21,7 +21,7 @@ const NoteModal: FC<NoteModalProps> = ({ initialData, isOpen, onClose }) => {
     if (!isMounted) return null
 
     const title = initialData ? "Edit Note" : "Add Note"
-    const description = initialData ? "Edit your Note" : "Add a new Note"
+    const description = initialData ? "Edit your Notes" : "Add a new Note"
 
     return (
         <Modal

@@ -1,32 +1,29 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
+const JWT_SECRET = process.env.JWT_SECRET; // ✅ Use the correct environment variable
+
 const fetchuser = (req, res, next) => {
-  //Get the token from request header
   const token = req.header("auth-token");
-  // if token not found return status 401 with message  to authenticate using correct credentials
+
   if (!token) {
-    return res
-      .status(401)
-      .json({ success: false, message: "Please Authenticate using correct Credentials" });
+    return res.status(401).json({
+      success: false,
+      message: "Access Denied: No Token Provided",
+    });
   }
 
   try {
-    // verify the token with your signature
-    const data = jwt.verify(token, process.env.JWT_SIGNATURE);
-    //  add id to req object
+    const data = jwt.verify(token, JWT_SECRET);
     req.user = data.user;
     next();
   } catch (error) {
-    // If any error occured then return status 401 with message to authenticate using correct credentials
-    return res
-      .status(401)
-      .json({ success: false, message: "Please Authenticate using correct Credentials" });
+    console.error("JWT Verification Error:", error.message); // ✅ Log error for debugging
+    return res.status(401).json({
+      success: false,
+      message: "Invalid or Expired Token. Please log in again.",
+    });
   }
 };
-/* ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
-/* ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
-
-// EXPORT
 
 module.exports = fetchuser;

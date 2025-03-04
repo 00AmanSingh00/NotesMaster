@@ -6,94 +6,56 @@ const { body, validationResult } = require("express-validator");
 const User = require("../models/Users");
 const fetchuser = require("../middleware/fetchuser");
 require("dotenv").config();
-const JWT_SIGNATURE = process.env.JWT_SIGNATURE;
 
-/* ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
-/* ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+const JWT_SECRET = process.env.JWT_SECRET; // ✅ Changed from JWT_SIGNATURE
 
-// ROUTE 1: Create  a User using:  POST -> "/api/auth/createuser" . Note: 'No Login Required'.
+// ROUTE 1: Create a User (POST "/api/auth/createuser") - No Login Required
 router.post(
   "/createuser",
-
   [
     body("name", "Enter a valid name").isLength({ min: 3 }),
     body("email", "Enter a valid email").isEmail(),
-    body("password", "Password must be of minimum length 5").isLength({
-      min: 5,
-    }),
-    body("cpassword", "Password must be of minimum length 5").isLength({
-      min: 5,
-    }),
+    body("password", "Password must be at least 5 characters").isLength({ min: 5 }),
+    body("cpassword", "Password must be at least 5 characters").isLength({ min: 5 }),
   ],
   async (req, res) => {
-    const errors = validationResult(req);
     let success = false;
-    //  If there is any error return error 400 status with the error
+    const errors = validationResult(req);
+
     if (!errors.isEmpty()) {
-      return res.status(400).json({
-        success,
-        message: "Enter Correct Credentials",
-        errors: errors.array(),
-      });
+      return res.status(400).json({ success, message: "Enter Correct Credentials", errors: errors.array() });
     }
-    // Put everything inside the try block so that if any error occur then,
-    // we can handle in the catch block
+
     try {
-      // Check if there exists a user with this email id
       let user = await User.findOne({ email: req.body.email });
-      // If exists then return error with message to use different email
-      if (user) {
-        return res
-          .status(400)
-          .json({ success, message: "Email is Already Registered" });
-      }
+      if (user) return res.status(400).json({ success, message: "Email is already registered" });
+
       if (req.body.password !== req.body.cpassword) {
-        return res
-          .status(400)
-          .json({ success, message: "Password does not match" });
+        return res.status(400).json({ success, message: "Passwords do not match" });
       }
-      // If the email is not already exists in the DB then
-      // make a salt of 10 characters using bcrypt
+
       const salt = await bcrypt.genSalt(10);
-      // make a securepassword using hash function with password entered by user and salt
       const securePass = await bcrypt.hash(req.body.password, salt);
-      // create a user with user data and the password
-      // which we have made in the previous step
+
       user = await User.create({
         name: req.body.name,
         email: req.body.email,
         password: securePass,
       });
-      const data = {
-        user: { id: user.id },
-      };
-      // create a authtoken with the user id and your signature
-      const authToken = jwt.sign(data, JWT_SIGNATURE);
-      // Now return the auth token
+
+      const data = { user: { id: user.id } };
+      const authToken = jwt.sign(data, JWT_SECRET, { expiresIn: "7d" }); // ✅ Set token expiry
+
       success = true;
-      return res.json({
-        success,
-        message: "User Registered Successfully",
-        authToken,
-      });
-      // res.json({ 'OK 200': 'User data successfully added','data':user });
+      return res.json({ success, message: "User Registered Successfully", authToken });
     } catch (error) {
-      // If any error occured then return status 500 with message Internal Server error
-      console.log(error.message);
-      return res.status(500).json({
-        success,
-        message: "Internal Server Error",
-        errors: error.messsage,
-      });
+      console.error(error.message);
+      return res.status(500).json({ success, message: "Internal Server Error", errors: error.message });
     }
   }
 );
 
-/* ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
-/* ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
-
-// ROUTE 2: Authenticate a User  using:  POST -> "/api/auth/login" . Note: 'No Login Required'.
-
+// ROUTE 2: Authenticate a User (POST "/api/auth/login") - No Login Required
 router.post(
   "/login",
   [
@@ -101,92 +63,47 @@ router.post(
     body("password", "Password cannot be blank").exists(),
   ],
   async (req, res) => {
-    const errors = validationResult(req);
     let success = false;
-    //  If there is any error return error 400 status with the error
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        success,
-        message: "Enter Correct Credentials",
-        errors: errors.array(),
-      });
-    }
-    // Using destructuring get the values of email and password
-    const { email, password } = req.body;
-    // Put everything inside the try block so that if any error occur then,
-    // we can handle in the catch block
-    try {
-      // Check if there exists a user with this email id
-      const user = await User.findOne({ email: email });
-      // If doesn't exists then return error with message to use correct credentials
-      if (!user) {
-        return res
-          .status(400)
-          .json({ success, message: "try to log in with correct credentials" });
-      }
-      // Compare the password user has enered with the saved password
-      // do not worry about hash and salt node js will take care care of that.
-      const comparePassword = await bcrypt.compare(password, user.password);
-      // If password doesn't match then return error with message to use correct credentials
-      if (!comparePassword) {
-        return res
-          .status(400)
-          .json({ success, message: "try to log in with correct credentials" });
-      }
+    const errors = validationResult(req);
 
-      //else  create a authtoken with the user id and your signature
-      const data = {
-        user: {
-          id: user.id,
-        },
-      };
-      const authToken = jwt.sign(data, JWT_SIGNATURE);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success, message: "Enter Correct Credentials", errors: errors.array() });
+    }
+
+    const { email, password } = req.body;
+
+    try {
+      const user = await User.findOne({ email });
+      if (!user) return res.status(400).json({ success, message: "Invalid credentials" });
+
+      const comparePassword = await bcrypt.compare(password, user.password);
+      if (!comparePassword) return res.status(400).json({ success, message: "Invalid credentials" });
+
+      const data = { user: { id: user.id } };
+      const authToken = jwt.sign(data, JWT_SECRET, { expiresIn: "7d" });
+
       success = true;
-      // Now return the auth token
-      res.json({
-        success,
-        message: "User Logged In Successfully",
-        authToken,
-        data,
-      });
+      res.json({ success, message: "User Logged In Successfully", authToken, user });
     } catch (error) {
-      // If any error occured then return status 500 with message Internal Server error
-      return res
-        .status(500)
-        .json({ success, message: "Internal Server Error", errors: error });
+      console.error(error.message);
+      return res.status(500).json({ success, message: "Internal Server Error", errors: error.message });
     }
   }
 );
 
-/* ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
-/* ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
-
-// ROUTE 3: Get loggedIn user details using:  POST "/api/auth/getuser". Note: 'Login Required'.
-
+// ROUTE 3: Get logged-in user details (POST "/api/auth/getuser") - Login Required
 router.post("/getuser", fetchuser, async (req, res) => {
   let success = false;
   try {
     const userId = req.user.id;
     const user = await User.findById(userId).select("-password");
-    // If doesn't exists then return error with message to use correct credentials
+
     success = true;
-    return res.json({
-      success,
-      message: "User Data fetched Successfully",
-      user,
-    });
+    return res.json({ success, message: "User Data fetched successfully", user });
   } catch (error) {
-    // If any error occured then return status 500 with message Internal Server error
-    console.log(error.message);
-    return res
-      .status(500)
-      .json({ success, message: "Internal Server Error", errors: error });
+    console.error(error.message);
+    return res.status(500).json({ success, message: "Internal Server Error", errors: error.message });
   }
 });
-
-/* ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
-/* ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
-
-// EXPORT
 
 module.exports = router;
