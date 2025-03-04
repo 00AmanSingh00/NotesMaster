@@ -1,0 +1,15 @@
+name = "notesmaster-backend"
+
+# ✅ Ensure the entry point is defined at the top
+main = "index.js"
+
+[build]
+command = "npm install"
+
+[vars]
+JWT_SIGNATURE = "694a9740-d2ba-4497-8764-9e109151f7f1"
+MONGO_URI = "mongodb+srv://amansinghh9408:AUU6y5dJaCL4Iv2A@last.kqcug.mongodb.net/?retryWrites=true&w=majority&appName=Last"
+FRONTEND_DEV = "http://localhost:3000"
+
+[placement]
+mode = "smart"
