@@ -3,10 +3,13 @@ name = "notesmaster-backend"
 # ✅ Ensure the entry point is defined at the top
 main = "index.js"
 
-compatibility_date = "2025-03-04"
+
 
 [build]
 command = "npm install"
+
+
+compatibility_date = "2025-03-04"
 node_compat = true
 
 
